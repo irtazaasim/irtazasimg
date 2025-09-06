@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Me</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+            background-size: 400% 400%;
+            animation: gradient 3s ease infinite;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            max-width: 400px;
+        }
+
+        .play-button {
+            background: linear-gradient(45deg, #ff4757, #ff3838);
+            border: none;
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            font-size: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 30px rgba(255, 71, 87, 0.4);
+            margin-bottom: 25px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 20px 40px rgba(255, 71, 87, 0.5);
+        }
+
+        .play-button:active {
+            transform: scale(0.95);
+        }
+
+        .play-button.playing {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+            font-size: 28px;
+        }
+
+        .timer {
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .volume-indicator {
+            color: white;
+            font-size: 20px;
+            margin-top: 15px;
+            opacity: 0.9;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .audio-visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            height: 80px;
+            margin: 25px 0;
+            gap: 4px;
+        }
+
+        .bar {
+            width: 6px;
+            background: linear-gradient(to top, #ff4757, #ff6b6b, #feca57);
+            border-radius: 3px;
+            animation: wave 0.8s ease-in-out infinite;
+        }
+
+        .bar:nth-child(1) { height: 25px; animation-delay: 0s; }
+        .bar:nth-child(2) { height: 45px; animation-delay: 0.1s; }
+        .bar:nth-child(3) { height: 65px; animation-delay: 0.2s; }
+        .bar:nth-child(4) { height: 40px; animation-delay: 0.3s; }
+        .bar:nth-child(5) { height: 70px; animation-delay: 0.4s; }
+        .bar:nth-child(6) { height: 30px; animation-delay: 0.5s; }
+        .bar:nth-child(7) { height: 55px; animation-delay: 0.6s; }
+        .bar:nth-child(8) { height: 35px; animation-delay: 0.7s; }
+        .bar:nth-child(9) { height: 60px; animation-delay: 0.8s; }
+
+        @keyframes wave {
+            0%, 100% { 
+                opacity: 0.4; 
+                transform: scaleY(0.3); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: scaleY(1); 
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .status {
+            color: white;
+            font-size: 18px;
+            margin-top: 10px;
+            opacity: 0.8;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CLICK ME</h1>
+        
+        <button class="play-button" id="playButton" onclick="startAudioBlast()">
+            🔥
+        </button>
+        
+        <div class="timer" id="timer">01:00</div>
+        
+        <!-- ADD YOUR AUDIO FILE HERE -->
+        <audio id="audioPlayer" preload="auto" loop>
+            <source src="Police Radio.mp3" type="audio/mpeg">
+            <source src="Agency.mp3" type="audio/wav">
+            <source src="Police Radio.mp3" type="audio/ogg">
+        </audio>
+        
+        <div class="audio-visualizer hidden" id="visualizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        
+        <div class="volume-indicator">No Problem</div>
+        <div class="status" id="status">Erorr 404</div>
+    </div>
+
+    <script>
+        let isPlaying = false;
+        let audioContext;
+        let oscillators = [];
+        let gainNodes = [];
+        let timeRemaining = 60;
+        let timerInterval;
+        let audioIntervpal;
+
+        const playButton = document.getElementById('playButton');
+        const timer = document.getElementById('timer');
+        const visualizer = document.getElementById('visualizer');
+        const status = document.getElementById('status');
+
+        function startAudioBlast() {
+            if (isPlaying) return;
+
+            const audioPlayer = document.getElementById('audioPlayer');
+            
+            isPlaying = true;
+            playButton.classList.add('playing');
+            playButton.innerHTML = '🎶';
+            visualizer.classList.remove('hidden');
+            status.textContent = 'BLASTING AUDIO!';
+            
+            // Set volume to maximum
+            audioPlayer.volume = 1.0;
+            
+            // Try to play the audio file first
+            if (audioPlayer.src && !audioPlayer.error) {
+                audioPlayer.currentTime = 0;
+                audioPlayer.play().then(() => {
+                    console.log('Playing custom audio file');
+                }).catch(() => {
+                    console.log('Custom audio failed, using generated tones');
+                    startContinuousAudio();
+                });
+            } else {
+                console.log('No audio file found, using generated tones');
+                // Initialize Audio Context for fallback
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                startContinuousAudio();
+            }
+            
+            // Start the countdown timer
+            startTimer();
+            
+            // Stop everything after exactly 60 seconds
+            setTimeout(() => {
+                stopAudioBlast();
+            }, 60000);
+        }
+
+        function startContinuousAudio() {
+            // Create multiple oscillators for rich sound
+            const frequencies = [220, 330, 440, 550, 660]; // Musical notes
+            
+            function createToneSet() {
+                // Clean up previous oscillators
+                oscillators.forEach(osc => {
+                    try { osc.stop(); } catch(e) {}
+                });
+                gainNodes.forEach(gain => {
+                    try { gain.disconnect(); } catch(e) {}
+                });
+                oscillators = [];
+                gainNodes = [];
+
+                frequencies.forEach((freq, index) => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    // Different wave types for variety
+                    const waveTypes = ['sine', 'square', 'sawtooth', 'triangle'];
+                    oscillator.type = waveTypes[index % waveTypes.length];
+                    
+                    // Set frequency with slight randomization
+                    oscillator.frequency.setValueAtTime(freq + (Math.random() * 20 - 10), audioContext.currentTime);
+                    
+                    // Set volume (maximum)
+                    gainNode.gain.setValueAtTime(0.15, audioContext.currentTime); // 0.15 per oscillator to avoid distortion
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + 0.8); // Short bursts
+                    
+                    oscillators.push(oscillator);
+                    gainNodes.push(gainNode);
+                });
+            }
+
+            // Create initial tone set
+            createToneSet();
+            
+            // Create new tone sets every 800ms for continuous sound
+            audioInterval = setInterval(() => {
+                if (isPlaying) {
+                    createToneSet();
+                }
+            }, 800);
+        }
+
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = timeRemaining % 60;
+                timer.textContent = ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')};
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                }
+            }, 1000);
+        }
+
+        function stopAudioBlast() {
+            isPlaying = false;
+            
+            // Stop the audio player
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            
+            // Clear intervals
+            if (timerInterval) clearInterval(timerInterval);
+            if (audioInterval) clearInterval(audioInterval);
+            
+            // Stop all generated audio
+            oscillators.forEach(osc => {
+                try { osc.stop(); } catch(e) {}
+            });
+            gainNodes.forEach(gain => {
+                try { gain.disconnect(); } catch(e) {}
+            });
+            
+            if (audioContext) {
+                audioContext.close();
+            }
+            
+            // Reset UI
+            playButton.classList.remove('playing');
+            playButton.innerHTML = '🔥';
+            visualizer.classList.add('hidden');
+            status.textContent = 'Blast complete! Click to restart.';
+            timer.textContent = '00:00';
+            
+            // Reset timer
+            timeRemaining = 60;
+            setTimeout(() => {
+                timer.textContent = '01:00';
+                status.textContent = 'Hmm';
+            }, 3000);
+        }
+
+        // Prevent accidental navigation during playback
+        window.addEventListener('beforeunload', (e) => {
+            if (isPlaying) {
+                e.preventDefault();
+                e.returnValue = '';
+                return 'Audio is still playing. Are you sure you want to leave?';
+            }
+        });
+    </script>
+</body>
+</html>
